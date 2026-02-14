@@ -7,20 +7,30 @@ grid = [list(map(int, input().split())) for _ in range(n)]
 pos = [[] for _ in range(p+1)]
 for i in range(n):
     for j in range(m):
-        typ = grid[i][j]
-        pos[typ].append((i, j))
+        pos[grid[i][j]].append((i, j))
 
-dist = [10**9] * len(pos[1])
-for idx, (i, j) in enumerate(pos[1]):
-    dist[idx] = i + j
+dp = []
+for i, (r, c) in enumerate(pos[1]):
+    dp.append(r + c)
 
 for t in range(2, p+1):
-    new_dist = [10**9] * len(pos[t])
-    for i2, (r2, c2) in enumerate(pos[t]):
-        for i1, (r1, c1) in enumerate(pos[t-1]):
-            d = dist[i1] + abs(r1 - r2) + abs(c1 - c2)
-            if d < new_dist[i2]:
-                new_dist[i2] = d
-    dist = new_dist
+    curr = []
+    if len(dp) > len(pos[t]):
+        for r2, c2 in pos[t]:
+            best = 10**9
+            for idx, (r1, c1) in enumerate(pos[t-1]):
+                d = dp[idx] + abs(r1 - r2) + abs(c1 - c2)
+                if d < best:
+                    best = d
+            curr.append(best)
+    else:
+        for r2, c2 in pos[t]:
+            best = 10**9
+            for idx, (r1, c1) in enumerate(pos[t-1]):
+                d = dp[idx] + abs(r1 - r2) + abs(c1 - c2)
+                if d < best:
+                    best = d
+            curr.append(best)
+    dp = curr
 
-print(min(dist))
+print(min(dp))
